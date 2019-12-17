@@ -9,14 +9,36 @@
 import XCTest
 @testable import TDD
 
+class TestedRegister {
+    var availableFunds: Decimal
+    var transactionTotal: Decimal = 0
+    
+    init(availableFunds: Decimal = 0) {
+        self.availableFunds = availableFunds
+    }
+    
+    func addItem(_ cost: Decimal) {
+        transactionTotal += cost
+    }
+}
+
 class TDDTests: XCTestCase {
+    var availableFunds: Decimal!
+    var sut: TestedRegister!
+    var itemCost: Decimal!
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        super.setUp()
+        itemCost = 42
+        availableFunds = 100
+        sut = TestedRegister(availableFunds: availableFunds)
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        itemCost = nil
+        availableFunds = nil
+        sut = nil
+        super.tearDown()
     }
 
     func testExample() {
@@ -29,6 +51,43 @@ class TDDTests: XCTestCase {
         self.measure {
             // Put the code you want to measure the time of here.
         }
+    }
+    
+    func testInit_createsCashRegister() {
+        XCTAssertNotNil(TestedRegister())
+    }
+    
+    func testInitAvailableFunds_setsAvailableFunds() {
+        // given
+        let avaiableFunds = Decimal(100)
+        
+        // when
+        let sut = TestedRegister(availableFunds: avaiableFunds)
+        
+        // then
+        XCTAssertEqual(sut.availableFunds, avaiableFunds)
+    }
+    
+    func testAddItem_oneItem_addsCostToTransactionTotal() {
+        
+        // when
+        sut.addItem(itemCost)
+        
+        // then
+        XCTAssertEqual(sut.transactionTotal, itemCost)
+    }
+    
+    func testAddItem_twoItems_addsCostsToTransactionTotal() {
+        
+        let itemCost2 = Decimal(20)
+        let expectedTotal = itemCost + itemCost2
+        
+        // when
+        sut.addItem(itemCost)
+        sut.addItem(itemCost2)
+        
+        // then
+        XCTAssertEqual(sut.transactionTotal, expectedTotal)
     }
 
 }
